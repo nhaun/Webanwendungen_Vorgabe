@@ -1,0 +1,54 @@
+version: '3.3'
+services:
+  web:
+    image: webapp
+    volumes:
+      - ./app:/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - web_setup
+    links:
+      - mongodb
+    working_dir: /app
+    user: "node"
+    command: "nodemon -L apps.js"
+    environment:
+      DATABASE_URL: mongodb://develop@mongodb/default
+      NODE_ENV: development
+    networks:
+      - front-tier
+      - back-tier
+
+  web_setup:
+    build: .
+    image: webapp
+    volumes:
+      - ./app:/app
+    depends_on:
+      - mongodb
+    links:
+      - mongodb
+    working_dir: /app
+    user: "node"
+    command: "npm install"
+    environment:
+      DATABASE_URL: mongodb://develop@mongodb/default
+      NODE_ENV: development
+    networks:
+      - front-tier
+      - back-tier
+
+  mongodb:
+    image: mvertes/alpine-mongo
+    volumes:
+      - /data/db
+      - /data/configdb
+    ports:
+      - "27017:27017"
+    networks:
+      - back-tier
+
+networks:
+  front-tier:
+  back-tier:
