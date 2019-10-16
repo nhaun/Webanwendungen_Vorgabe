@@ -8,6 +8,7 @@ RUN npm config set registry https://registry.npmjs.org
 
 COPY app/package.json /app/package.json
 
+RUN npm install express --save
 RUN npm install 
 # && npm ls \
 # && npm cache clean --force \
